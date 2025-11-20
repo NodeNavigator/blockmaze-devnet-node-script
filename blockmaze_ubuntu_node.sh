@@ -84,7 +84,7 @@ echo "Enter the Name for the node:"
 echo "============================================================================================================"
 read -r MONIKER
 KEYS="mykey"
-CHAINID="${CHAIN_ID:-blockmaze_6164-1}"
+CHAINID="${CHAIN_ID:-blockmaze_6163-1}"
 KEYRING="os"
 KEYALGO="eth_secp256k1"
 LOGLEVEL="info"
@@ -142,59 +142,15 @@ fi
 	sudo rm -rf "$HOMEDIR"
 
 	# Set client config
-  blockmazed config set client chain-id "$CHAINID" --home "$HOMEDIR"
-	blockmazed config set client keyring-backend "$KEYRING" --home "$HOMEDIR"
+  $BINARY config set client chain-id "$CHAINID" --home "$HOMEDIR"
+	$BINARY config set client keyring-backend "$KEYRING" --home "$HOMEDIR"
 	
   echo "===========================Copy these keys with mnemonics and save it in safe place ==================================="
-	blockmazed keys add $KEYS --keyring-backend $KEYRING --algo $KEYALGO --home "$HOMEDIR"
+	$BINARY keys add $KEYS --keyring-backend $KEYRING --algo $KEYALGO --home "$HOMEDIR"
 	echo "========================================================================================================================"
 	echo "========================================================================================================================"
-	blockmazed init $MONIKER -o --chain-id $CHAINID --home "$HOMEDIR"
-  # Allocate genesis accounts (cosmos formatted addresses)
-	# blockmazed add-genesis-account $KEYS 10000000000000000000000000000bmz --keyring-backend $KEYRING --home "$HOMEDIR"
-
-	# Sign genesis transaction
-	# blockmazed gentx ${KEYS} 1000000000000000000000000bmz --keyring-backend $KEYRING --chain-id $CHAINID --home "$HOMEDIR"
-	
-	# Collect genesis tx
-	# blockmazed collect-gentxs --home "$HOMEDIR"
-  
-	# Change parameter token denominations to bmz
-	jq '.app_state["staking"]["params"]["bond_denom"]="bmz"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	jq '.app_state["crisis"]["constant_fee"]["denom"]="bmz"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	jq '.app_state["gov"]["deposit_params"]["min_deposit"][0]["denom"]="bmz"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	jq '.app_state["gov"]["params"]["min_deposit"][0]["denom"]="bmz"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	# jq '.app_state["evm"]["params"]["evm_denom"]="bmz"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-  jq '.app_state["mint"]["params"]["mint_denom"]="bmz"' >"$TMP_GENESIS" "$GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-
-	jq '.consensus_params["block"]["max_bytes"]="8388608"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-    # jq '.app_state["mint"]["minter"]["inflation"]="0.080000000000000000"' >"$TMP_GENESIS" "$GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-    # jq '.app_state["mint"]["params"]["inflation_rate_change"]="0.080000000000000000"' >"$TMP_GENESIS" "$GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-    # jq '.app_state["mint"]["params"]["inflation_max"]="0.080000000000000000"' >"$TMP_GENESIS" "$GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-    # jq '.app_state["mint"]["params"]["inflation_min"]="0.080000000000000000"' >"$TMP_GENESIS" "$GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-   # jq '.app_state["feemarket"]["params"]["base_fee"]="182855642857142"' >"$TMP_GENESIS" "$GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-	# Set gas limit in genesis
-	jq '.consensus_params["block"]["max_gas"]="1000000000"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-  jq '.consensus_params["block"]["max_bytes"]="5242880"' "$GENESIS" >"$TMP_GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-  jq '.app_state["mint"]["params"]["blocks_per_year"]="5256000 "' >"$TMP_GENESIS" "$GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-  jq '.app_state["gov"]["deposit_params"]["max_deposit_period"]="1800s"' >"$TMP_GENESIS" "$GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-  jq '.app_state["gov"]["params"]["max_deposit_period"]="1800s"' >"$TMP_GENESIS" "$GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-  jq '.app_state["gov"]["voting_params"]["voting_period"]="1800s"' >"$TMP_GENESIS" "$GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-  jq '.app_state["gov"]["params"]["voting_period"]="1800s"' >"$TMP_GENESIS" "$GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-  jq '.app_state["staking"]["params"]["unbonding_time"]="1800s"' >"$TMP_GENESIS" "$GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-  jq '.app_state["slashing"]["params"]["downtime_jail_duration"]="600s"' >"$TMP_GENESIS" "$GENESIS" && mv "$TMP_GENESIS" "$GENESIS"
-  
-  # Don't enable memiavl by default
-	grep -q -F '[memiavl]' "$APP_TOML" && sed -i '/\[memiavl\]/,/^\[/ s/enable = true/enable = false/' "$APP_TOML"
-  # Don't enable Rosetta API by default
-	grep -q -F '[rosetta]' "$APP_TOML" && sed -i '/\[rosetta\]/,/^\[/ s/enable = true/enable = false/' "$APP_TOML"
-	# Don't enable versionDB by default
-	grep -q -F '[versiondb]' "$APP_TOML" && sed -i '/\[versiondb\]/,/^\[/ s/enable = true/enable = false/' "$APP_TOML"
-	
-  # Change proposal periods to pass within a reasonable time for local testing
-	# sed -i.bak 's/"max_deposit_period": "172800s"/"max_deposit_period": "30s"/g' "$GENESIS"
-	# sed -i.bak 's/"voting_period": "172800s"/"voting_period": "30s"/g' "$GENESIS"
-	sed -i.bak 's/"expedited_voting_period": "86400s"/"expedited_voting_period": "600s"/g' "$GENESIS"
+	$BINARY init $MONIKER -o --chain-id $CHAINID --home "$HOMEDIR"
+ 
 
 	#changes status in app,config files
     sed -i 's/timeout_commit = "3s"/timeout_commit = "6s"/g' "$CONFIG"
@@ -222,13 +178,6 @@ fi
     sed -i 's/\[\]/["*"]/g' "$CONFIG"
 	  sed -i 's/\["\*",\]/["*"]/g' "$CONFIG"
   
-# sed -i 's/enable = false/enable = true/g' "$CONFIG"
-# sed -i 's/rpc_servers \s*=\s* ""/rpc_servers = ""/g' "$CONFIG"
-# sed -i 's/trust_hash \s*=\s* ""/trust_hash = "8223EF205275D355369D43391DA33A7AD7355932B50E50A7C092A0729084C739"/g' "$CONFIG"
-# sed -i 's/trust_height = 0/trust_height = 5063000/g' "$CONFIG"
-# sed -i 's/trust_period = "112h0m0s"/trust_period = "168h0m0s"/g' "$CONFIG"
-# sed -i 's/flush_throttle_timeout = "100ms"/flush_throttle_timeout = "10ms"/g' "$CONFIG"
-# sed -i 's/peer_gossip_sleep_duration = "100ms"/peer_gossip_sleep_duration = "10ms"/g' "$CONFIG"
 	# remove the genesis file from binary
 	 rm -rf $HOMEDIR/config/genesis.json
 
@@ -236,13 +185,8 @@ fi
 	 cp $current_path/genesis.json $HOMEDIR/config
 
 	# Run this to ensure everything worked and that the genesis file is setup correctly
-	blockmazed validate-genesis --home "$HOMEDIR"
+	$BINARY validate-genesis --home "$HOMEDIR"
 
-	# Set persistent peers from PEERS array (comma-separated)
-	if [ -n "$PERSISTENT_PEERS" ]; then
-		# Use pipe (|) as delimiter to avoid issues with @ and : in peer addresses
-		sed -i "s|persistent_peers = \"\"|persistent_peers = \"$PERSISTENT_PEERS\"|g" "$CONFIG"
-	fi
 	echo "export DAEMON_NAME=blockmazed" >> ~/.profile
     echo "export DAEMON_HOME="$HOMEDIR"" >> ~/.profile
     source ~/.profile
@@ -250,11 +194,15 @@ fi
     echo $DAEMON_NAME
 
 	cosmovisor init "${INSTALL_PATH}${BINARY}"
-
 	
-	TENDERMINTPUBKEY=$(blockmazed tendermint show-validator --home $HOMEDIR | grep "key" | cut -c12-)
-	NodeId=$(blockmazed tendermint show-node-id --home $HOMEDIR --keyring-backend $KEYRING)
-	BECH32ADDRESS=$(blockmazed keys show ${KEYS} --home $HOMEDIR --keyring-backend $KEYRING| grep "address" | cut -c12-)
+  	# Set persistent peers from PEERS array (comma-separated)
+	if [ -n "$PERSISTENT_PEERS" ]; then
+		# Use pipe (|) as delimiter to avoid issues with @ and : in peer addresses
+		sed -i "s|persistent_peers = \"\"|persistent_peers = \"$PERSISTENT_PEERS\"|g" "$CONFIG"
+	fi
+	TENDERMINTPUBKEY=$($BINARY tendermint show-validator --home $HOMEDIR | grep "key" | cut -c12-)
+	NodeId=$($BINARY tendermint show-node-id --home $HOMEDIR --keyring-backend $KEYRING)
+	BECH32ADDRESS=$($BINARY keys show ${KEYS} --home $HOMEDIR --keyring-backend $KEYRING| grep "address" | cut -c12-)
 
 	echo "========================================================================================================================"
 	echo "tendermint Key==== "$TENDERMINTPUBKEY
@@ -262,6 +210,12 @@ fi
 	echo "NodeId ===" $NodeId
 	echo "========================================================================================================================"
 
+    # Don't enable Rosetta API by default
+		grep -q -F '[rosetta]' "$APP_TOML" && sed -i '/\[rosetta\]/,/^\[/ s/enable = true/enable = false/' "$APP_TOML"
+		# Don't enable memiavl by default
+		grep -q -F '[memiavl]' "$APP_TOML" && sed -i '/\[memiavl\]/,/^\[/ s/enable = true/enable = false/' "$APP_TOML"
+		# Don't enable versionDB by default
+		grep -q -F '[versiondb]' "$APP_TOML" && sed -i '/\[versiondb\]/,/^\[/ s/enable = true/enable = false/' "$APP_TOML"
 fi
 
 #========================================================================================================================================================

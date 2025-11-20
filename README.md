@@ -5,9 +5,10 @@ This repository provides ubuntu 22.04 and 24.04 script for running a node on blo
 System Requirements:
 
 - Operating System: Ubuntu 22.04 or 24.04
-- Memory: At least 4GB RAM
+- Memory: At least 16GB RAM
 - Storage: Minimum 20GB available disk space
 - Network: Stable internet connection
+- CPU: 4core
 
 Clone this repo using:
 git clone '<https://github.com/blockmaze/blockmaze-devnet-node-script.git>'
