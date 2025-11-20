@@ -84,7 +84,7 @@ echo "Enter the Name for the node:"
 echo "============================================================================================================"
 read -r MONIKER
 KEYS="mykey"
-CHAINID="${CHAIN_ID:-blockmaze_9088-1}"
+CHAINID="${CHAIN_ID:-blockmaze_6164-1}"
 KEYRING="os"
 KEYALGO="eth_secp256k1"
 LOGLEVEL="info"
